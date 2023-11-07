@@ -10,55 +10,106 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const twentyFiveMinutes = 1500;
-  int totalSeconds = twentyFiveMinutes;
+  static const defalutFocusTime = 1500;
+  static const defalutRestTime = 300;
+  static const focus = "focus";
+  static const rest = "rest";
+  int focusTime = defalutFocusTime;
+  int restTime = defalutRestTime;
   bool isRunning = false;
+  String current = focus;
+  int round = 0;
+  int goal = 0;
   int totalPomodoros = 0;
-  late Timer timer;
+  late Timer focusTimer;
+  late Timer restTimer;
+
+  void _handleTimerOptionSelected(int minute) {
+    setState(() {
+      focusTime = minute * 60;
+    });
+  }
 
   void onTick(Timer timer) {
-    if (totalSeconds == 0) {
+    if (focusTime == 0) {
+      restTimer = Timer.periodic(const Duration(seconds: 1), onRest);
+      focusTimer.cancel();
       setState(() {
-        totalPomodoros = totalPomodoros + 1;
-        isRunning = false;
-        totalSeconds = twentyFiveMinutes;
+        focusTime = defalutFocusTime;
+        current = rest;
+        round = round + 1;
       });
-      timer.cancel();
     } else {
       setState(() {
-        totalSeconds = totalSeconds - 1;
+        focusTime = focusTime - 1;
+      });
+    }
+    if (round == 4) {
+      round = 0;
+      goal = goal + 1;
+    }
+  }
+
+  void onRest(Timer timer) {
+    if (restTime == 0) {
+      restTimer.cancel();
+      setState(() {
+        restTime = defalutRestTime;
+        current = focus;
+        isRunning = false;
+      });
+    } else {
+      setState(() {
+        restTime = restTime - 1;
       });
     }
   }
 
   void onStartPressed() {
-    timer = Timer.periodic(
-      const Duration(seconds: 1),
-      onTick,
-    );
     setState(() {
-      isRunning = true;
+      if (current == focus) {
+        focusTimer == Timer.periodic(const Duration(seconds: 1), onTick);
+      }
+      if (current == rest) {
+        restTimer = Timer.periodic(const Duration(seconds: 1), onRest);
+      }
     });
   }
 
   void onPausePressed() {
-    timer.cancel();
+    if (focusTimer.isActive) {
+      focusTimer.cancel();
+    } else if (restTimer.isActive) {
+      restTimer.cancel();
+    }
     setState(() {
       isRunning = false;
     });
   }
 
   void onResetPressed() {
-    timer.cancel();
+    if (isRunning && focusTimer.isActive) {
+      focusTimer.cancel();
+    } else if (isRunning && restTimer.isActive) {
+      restTimer.cancel();
+    }
     setState(() {
-      totalSeconds = twentyFiveMinutes;
       isRunning = false;
+      focusTime = defalutFocusTime;
+      restTime = defalutRestTime;
+      current = focus;
     });
   }
 
-  String format(int seconds) {
+  List<String> format(int seconds) {
     var duration = Duration(seconds: seconds);
-    return duration.toString().split(".").first.substring(2, 7);
+    return duration
+        .toString()
+        .split('.')
+        .first
+        .substring(2)
+        .toString()
+        .split(':');
   }
 
   @override
