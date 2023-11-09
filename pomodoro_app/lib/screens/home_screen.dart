@@ -12,15 +12,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static const defalutFocusTime = 1500;
   static const defalutRestTime = 300;
-  static const focus = "focus";
-  static const rest = "rest";
+  static const focus = 'focus';
+  static const rest = 'rest';
   int focusTime = defalutFocusTime;
   int restTime = defalutRestTime;
   bool isRunning = false;
   String current = focus;
   int round = 0;
   int goal = 0;
-  int totalPomodoros = 0;
   late Timer focusTimer;
   late Timer restTimer;
 
@@ -73,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (current == rest) {
         restTimer = Timer.periodic(const Duration(seconds: 1), onRest);
       }
+      isRunning = true;
     });
   }
 
@@ -116,91 +116,248 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                format(totalSeconds),
-                style: TextStyle(
-                  color: Theme.of(context).cardColor,
-                  fontSize: 89,
-                  fontWeight: FontWeight.w600,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+        ),
+        child: Column(
+          children: [
+            Flexible(
+              flex: 1,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'POMOTIMER',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    letterSpacing: 2,
+                  ),
                 ),
               ),
             ),
-          ),
-          Flexible(
-            flex: 3,
-            child: Center(
-              child: IconButton(
-                iconSize: 100,
-                onPressed: isRunning ? onPausePressed : onStartPressed,
-                color: Theme.of(context).cardColor,
-                icon: Icon(
-                  isRunning
-                      ? Icons.pause_circle_outline
-                      : Icons.play_circle_outlined,
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            child: Center(
-              child: IconButton(
-                iconSize: 70,
-                color: Theme.of(context).cardColor,
-                onPressed: onResetPressed,
-                icon: const Icon(
-                  Icons.restart_alt,
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Column(
+            Flexible(
+              flex: 4,
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Pomodoros",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color:
-                                Theme.of(context).textTheme.displayLarge!.color,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 30,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            format(current == focus ? focusTime : restTime)
+                                .first,
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: FontWeight.w800,
+                              backgroundColor: Theme.of(context).cardColor,
+                              fontSize: 50,
+                            ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
+                        const SizedBox(width: 10),
                         Text(
-                          "$totalPomodoros",
+                          ":",
                           style: TextStyle(
-                            fontSize: 58,
-                            fontWeight: FontWeight.w600,
                             color:
-                                Theme.of(context).textTheme.displayLarge!.color,
+                                Theme.of(context).textTheme.bodyMedium?.color,
+                            fontSize: 50,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 30,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            format(current == focus ? focusTime : restTime)
+                                .last,
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: FontWeight.w800,
+                              backgroundColor: Theme.of(context).cardColor,
+                              fontSize: 50,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          TimerOption(
+                            minute: 15,
+                            onTimeSelected: _handleTimerOptionSelected,
+                          ),
+                          const SizedBox(width: 10),
+                          TimerOption(
+                            minute: 20,
+                            onTimeSelected: _handleTimerOptionSelected,
+                          ),
+                          const SizedBox(width: 10),
+                          TimerOption(
+                            minute: 25,
+                            onTimeSelected: _handleTimerOptionSelected,
+                          ),
+                          const SizedBox(width: 10),
+                          TimerOption(
+                            minute: 30,
+                            onTimeSelected: _handleTimerOptionSelected,
+                          ),
+                          const SizedBox(width: 10),
+                          TimerOption(
+                            minute: 35,
+                            onTimeSelected: _handleTimerOptionSelected,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    IconButton(
+                      onPressed: isRunning ? onPausePressed : onStartPressed,
+                      icon: Icon(
+                        isRunning ? Icons.pause_circle : Icons.play_circle,
+                      ),
+                      color: Theme.of(context).primaryColorLight,
+                      iconSize: 100,
+                    ),
+                    IconButton(
+                      onPressed: onResetPressed,
+                      icon: const Icon(
+                        Icons.refresh,
+                      ),
+                      color: Theme.of(context).primaryColorLight,
+                      iconSize: 20,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+            Flexible(
+              flex: 1,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "$round/4",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            "ROUND",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            '$goal/12',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'GOAL',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef TimeSelectedCallback = void Function(int minute);
+
+class TimerOption extends StatelessWidget {
+  final int minute;
+  final TimeSelectedCallback onTimeSelected;
+
+  const TimerOption({
+    super.key,
+    required this.minute,
+    required this.onTimeSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onTimeSelected(minute);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 5,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).primaryColorLight,
+            width: 3.0,
           ),
-        ],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          '$minute',
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
