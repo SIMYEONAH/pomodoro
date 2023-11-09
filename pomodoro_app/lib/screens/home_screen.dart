@@ -6,10 +6,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreen();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreen extends State<HomeScreen> {
   static const defalutFocusTime = 1500;
   static const defalutRestTime = 300;
   static const focus = 'focus';
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         focusTime = focusTime - 1;
       });
     }
+
     if (round == 4) {
       round = 0;
       goal = goal + 1;
@@ -64,10 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void onStartPressed() {
+  void onStartTimer() {
     setState(() {
       if (current == focus) {
-        focusTimer == Timer.periodic(const Duration(seconds: 1), onTick);
+        focusTimer = Timer.periodic(const Duration(seconds: 1), onTick);
       }
       if (current == rest) {
         restTimer = Timer.periodic(const Duration(seconds: 1), onRest);
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void onPausePressed() {
+  void onPauseTimer() {
     if (focusTimer.isActive) {
       focusTimer.cancel();
     } else if (restTimer.isActive) {
@@ -93,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (isRunning && restTimer.isActive) {
       restTimer.cancel();
     }
+
     setState(() {
       isRunning = false;
       focusTime = defalutFocusTime;
@@ -238,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 40,
                     ),
                     IconButton(
-                      onPressed: isRunning ? onPausePressed : onStartPressed,
+                      onPressed: isRunning ? onPauseTimer : onStartTimer,
                       icon: Icon(
                         isRunning ? Icons.pause_circle : Icons.play_circle,
                       ),
