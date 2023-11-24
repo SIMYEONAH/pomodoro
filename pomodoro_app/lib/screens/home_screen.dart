@@ -269,7 +269,7 @@ class _HomeScreen extends State<HomeScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

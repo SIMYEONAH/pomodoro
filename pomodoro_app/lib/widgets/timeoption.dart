@@ -20,21 +20,21 @@ class TimerOption extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: 8,
+          horizontal: 10,
           vertical: 5,
         ),
         decoration: BoxDecoration(
           border: Border.all(
             color: Theme.of(context).primaryColorLight,
-            width: 3.0,
+            width: 5.0,
           ),
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           '$minute',
           style: TextStyle(
             color: Theme.of(context).textTheme.bodyMedium?.color,
-            fontSize: 20,
+            fontSize: 35,
             fontWeight: FontWeight.w600,
           ),
         ),
